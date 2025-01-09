@@ -73,10 +73,19 @@ int main(int argc, char ** argv)
         auto scan_msg = pkg->GetLaserScan(); //scan_msg is a sensor_msgs::msg::LaserScan object, which should have the lidar scan readings
         
         // Limit to 40 lidar readings
-        if (scan_msg.ranges.size() > 40) {
-          scan_msg.ranges.resize(40);
-          scan_msg.intensities.resize(40);
+
+        int step = scan_msg.ranges.size() / 40; // depending on the size of the scan_msg array, the step is calculated to get 40 readings
+
+        std::vector<float> sparsed_ranges;
+        std::vector<float> sparsed_intensities;
+
+        for (int i = 0; i < 40; ++i) {
+          sparsed_ranges.push_back(scan_msg.ranges[i * step]);
+          sparsed_intensities.push_back(scan_msg.intensities[i * step]);
         }
+
+        scan_msg.ranges = sparsed_ranges;
+        scan_msg.intensities = sparsed_intensities;
 
         lidar_pub->publish(scan_msg); // Publish the lidar scan readings limited to 40 readings
         pkg->ResetFrameReady();
