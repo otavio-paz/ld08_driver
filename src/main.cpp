@@ -57,7 +57,7 @@ int main(int argc, char ** argv)
     if (cmd_port.Open(port_name)) {
       std::cout << "LDS-02" << product << " started successfully " << std::endl;
     }
-
+    
     // char topic_name[20]={0};
     // strcat(topic_name,product.c_str());
     // strcat(topic_name,"/LDLiDAR");
@@ -65,13 +65,32 @@ int main(int argc, char ** argv)
       "scan", rclcpp::QoS(rclcpp::SensorDataQoS())
     );
 
+    // This loop continuously runs as long as the rclcpp::ok() is true
     while (rclcpp::ok()) {
-      if (pkg->IsFrameReady()) {
-        pkg->setStamp(node->now());
-        lidar_pub->publish(pkg->GetLaserScan());
+      if (pkg->IsFrameReady()) { // If a frame is ready by calling the method on the pkg object
+        pkg->setStamp(node->now()); // Set the timestamp of the package
+
+        auto scan_msg = pkg->GetLaserScan(); //scan_msg is a sensor_msgs::msg::LaserScan object, which should have the lidar scan readings
+        
+        // Limit to 40 lidar readings
+        if (scan_msg.ranges.size() > 40) {
+          scan_msg.ranges.resize(40);
+          scan_msg.intensities.resize(40);
+        }
+
+        lidar_pub->publish(scan_msg); // Publish the lidar scan readings limited to 40 readings
         pkg->ResetFrameReady();
       }
     }
+
+  // ORIGINAL CODE
+  // while (rclcpp::ok()) {
+  //     if (pkg->IsFrameReady()) { // If a frame is ready by calling the method on the pkg object
+  //       pkg->setStamp(node->now()); // Set the timestamp of the package
+  //       lidar_pub->publish(pkg->GetLaserScan()); // GetLaserScan retrieves the lidar scan readings
+  //       pkg->ResetFrameReady();
+  //     }
+  //   }
   } else {
     std::cout << "Can't find LDS-02" << product << std::endl;
   }
