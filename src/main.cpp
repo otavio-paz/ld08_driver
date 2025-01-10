@@ -87,6 +87,9 @@ int main(int argc, char ** argv)
         scan_msg.ranges = sparsed_ranges;
         scan_msg.intensities = sparsed_intensities;
 
+        // Adjust the angle_increment parameter
+        scan_msg.angle_increment = scan_msg.angle_increment * step;
+
         lidar_pub->publish(scan_msg); // Publish the lidar scan readings limited to 40 readings
         pkg->ResetFrameReady();
       }
