@@ -80,26 +80,37 @@ int main(int argc, char ** argv)
         std::vector<float> sparsed_intensities;
 
         for (int i = 0; i < 40; i++) {
-          sparsed_ranges.push_back(scan_msg.ranges[i * step]);
-          sparsed_intensities.push_back(scan_msg.intensities[i * step]);
+          float range_value = scan_msg.ranges[i*step];
+          float intensity_value = scan_msg.intensities[i*step];
+
+          if (std::isnan(range_value)) {
+            range_value = (scan_msg.range_min + scan_msg.range_max) / 2.0;
+          }
+
+          if (std::isnan(intensity_value)) {
+            intensity_value = 0.0;
+          }
+
+          sparsed_ranges.push_back(range_value);
+          sparsed_intensities.push_back(intensity_value);
         }
 
         scan_msg.ranges = sparsed_ranges;
         scan_msg.intensities = sparsed_intensities;
 
         // Check if any of the values are Nan, if so, replace with the average of lidar readings
-        for (size_t i=0; i < scan_msg.ranges.size(); i++) {
-          if (std::isnan(scan_msg.ranges[i])) {
-            scan_msg.ranges[i] = (scan_msg.range_min + scan_msg.range_max) / 2.0;
-          }
-        }
+        // for (size_t i=0; i < scan_msg.ranges.size(); i++) {
+        //   if (std::isnan(scan_msg.ranges[i])) {
+        //     scan_msg.ranges[i] = (scan_msg.range_min + scan_msg.range_max) / 2.0;
+        //   }
+        // }
 
-        // Check if intensitiesare Nan, if it is, replace with 0 (bad reflection/dark material)
-        for (size_t i=0; i < scan_msg.intensities.size(); i++) {
-          if (std::isnan(scan_msg.intensities[i])) {
-            scan_msg.intensities[i] = 0.0;
-          }
-        }
+        // // Check if intensitiesare Nan, if it is, replace with 0 (bad reflection/dark material)
+        // for (size_t i=0; i < scan_msg.intensities.size(); i++) {
+        //   if (std::isnan(scan_msg.intensities[i])) {
+        //     scan_msg.intensities[i] = 0.0;
+        //   }
+        // }
 
         // Adjust the angle_increment parameter
         // scan_msg.angle_increment = scan_msg.angle_increment * step; // Attempt #1
