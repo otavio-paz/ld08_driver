@@ -84,10 +84,13 @@ int main(int argc, char ** argv)
           float intensity_value = scan_msg.intensities[i*step];
 
           if (std::isnan(range_value)) {
+            // publish a message to console
+            std::cout << "Range value is NaN, replacing with average of min and max" << std::endl;
             range_value = (scan_msg.range_min + scan_msg.range_max) / 2.0;
           }
 
           if (std::isnan(intensity_value)) {
+            std::cout << "Intensity value is NaN, replacing with average of min and max" << std::endl;
             intensity_value = 0.0;
           }
 
