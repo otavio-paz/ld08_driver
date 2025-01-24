@@ -88,14 +88,14 @@ int main(int argc, char ** argv)
         scan_msg.intensities = sparsed_intensities;
 
         // Check if any of the values are Nan, if so, replace with the average of lidar readings
-        for (int i=0; i < scan_msg.ranges.size(); i++) {
+        for (size_t i=0; i < scan_msg.ranges.size(); i++) {
           if (std::isnan(scan_msg.ranges[i])) {
             scan_msg.ranges[i] = (scan_msg.range_min + scan_msg.range_max) / 2.0;
           }
         }
 
         // Check if intensitiesare Nan, if it is, replace with 0 (bad reflection/dark material)
-        for (int i=0; i < scan_msg.intensities.size(); i++) {
+        for (size_t i=0; i < scan_msg.intensities.size(); i++) {
           if (std::isnan(scan_msg.intensities[i])) {
             scan_msg.intensities[i] = 0.0;
           }
