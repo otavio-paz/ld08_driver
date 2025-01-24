@@ -79,7 +79,7 @@ int main(int argc, char ** argv)
         std::vector<float> sparsed_ranges;
         std::vector<float> sparsed_intensities;
 
-        for (int i = 0; i < 40; ++i) {
+        for (int i = 0; i < 40; i++) {
           sparsed_ranges.push_back(scan_msg.ranges[i * step]);
           sparsed_intensities.push_back(scan_msg.intensities[i * step]);
         }
@@ -87,17 +87,25 @@ int main(int argc, char ** argv)
         scan_msg.ranges = sparsed_ranges;
         scan_msg.intensities = sparsed_intensities;
 
-        // Adjust the angle_increment parameter
-        // scan_msg.angle_increment = scan_msg.angle_increment * step; // Attempt #1
-        scan_msg.angle_increment = (scan_msg.angle_max - scan_msg.angle_min) / 40.0; // Attempt #2
-
         // Check if any of the values are Nan, if so, replace with the average of lidar readings
-        for (int i = 0; i < scan_msg.ranges.size(); ++i) {
+        for (int i=0; i < scan_msg.ranges.size(); i++) {
           if (std::isnan(scan_msg.ranges[i])) {
             scan_msg.ranges[i] = (scan_msg.range_min + scan_msg.range_max) / 2.0;
           }
         }
-        
+
+        // Check if intensitiesare Nan, if it is, replace with 0 (bad reflection/dark material)
+        for (int i=0; i < scan_msg.intensities.size(); i++) {
+          if (std::isnan(scan_msg.intensities[i])) {
+            scan_msg.intensities[i] = 0.0;
+          }
+        }
+
+        // Adjust the angle_increment parameter
+        // scan_msg.angle_increment = scan_msg.angle_increment * step; // Attempt #1
+        scan_msg.angle_increment = (scan_msg.angle_max - scan_msg.angle_min) / 40.0; // Attempt #2
+
+
         lidar_pub->publish(scan_msg); // Publish the lidar scan readings limited to 40 readings
         pkg->ResetFrameReady();
       }
