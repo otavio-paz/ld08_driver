@@ -79,9 +79,13 @@ int main(int argc, char ** argv)
         std::vector<float> sparsed_ranges;
         std::vector<float> sparsed_intensities;
 
+        std::cout << "Limiting LiDAR samples to 40!" << std::endl;
+
         for (int i = 0; i < 40; i++) {
           float range_value = scan_msg.ranges[i*step];
           float intensity_value = scan_msg.intensities[i*step];
+
+          
 
           if (std::isnan(range_value)) {
             // publish a message to console
