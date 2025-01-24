@@ -79,7 +79,7 @@ int main(int argc, char ** argv)
         std::vector<float> sparsed_ranges;
         std::vector<float> sparsed_intensities;
 
-        std::cout << "Limiting LiDAR samples to 40!" << std::endl;
+        //std::cout << "Limiting LiDAR samples to 40!" << std::endl;
 
         for (int i = 0; i < 40; i++) {
           float range_value = scan_msg.ranges[i*step];
@@ -89,12 +89,12 @@ int main(int argc, char ** argv)
 
           if (std::isnan(range_value)) {
             // publish a message to console
-            std::cout << "Range value is NaN, replacing with average of min and max" << std::endl;
+            //std::cout << "Range value is NaN, replacing with average of min and max" << std::endl;
             range_value = (scan_msg.range_min + scan_msg.range_max) / 2.0;
           }
 
           if (std::isnan(intensity_value)) {
-            std::cout << "Intensity value is NaN, replacing with average of min and max" << std::endl;
+            //std::cout << "Intensity value is NaN, replacing with 0" << std::endl;
             intensity_value = 0.0;
           }
 
