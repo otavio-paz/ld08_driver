@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
   }
 
   if (port_name.empty() == false) {
-    std::cout << "FOUND LDS-02" << product << std::endl;
+    std::cout << "[Otavio's version] FOUND LDS-02" << product << std::endl;
     cmd_port.SetReadCallback(
       [&pkg](const char * byte, size_t len) {
         if (pkg->Parse((const uint8_t *)(byte), len)) {
