@@ -91,6 +91,13 @@ int main(int argc, char ** argv)
         // scan_msg.angle_increment = scan_msg.angle_increment * step; // Attempt #1
         scan_msg.angle_increment = (scan_msg.angle_max - scan_msg.angle_min) / 40.0; // Attempt #2
 
+        // Check if any of the values are Nan, if so, replace with the average of lidar readings
+        for (int i = 0; i < scan_msg.ranges.size(); ++i) {
+          if (std::isnan(scan_msg.ranges[i])) {
+            scan_msg.ranges[i] = (scan_msg.range_min + scan_msg.range_max) / 2.0;
+          }
+        }
+        
         lidar_pub->publish(scan_msg); // Publish the lidar scan readings limited to 40 readings
         pkg->ResetFrameReady();
       }
