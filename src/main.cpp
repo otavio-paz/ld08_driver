@@ -85,16 +85,11 @@ int main(int argc, char ** argv)
           float range_value = scan_msg.ranges[i*step];
           float intensity_value = scan_msg.intensities[i*step];
 
-          
-
           if (std::isnan(range_value)) {
-            // publish a message to console
-            //std::cout << "Range value is NaN, replacing with average of min and max" << std::endl;
             range_value = (scan_msg.range_min + scan_msg.range_max) / 2.0;
           }
 
           if (std::isnan(intensity_value)) {
-            //std::cout << "Intensity value is NaN, replacing with 0" << std::endl;
             intensity_value = 0.0;
           }
 
@@ -104,20 +99,6 @@ int main(int argc, char ** argv)
 
         scan_msg.ranges = sparsed_ranges;
         scan_msg.intensities = sparsed_intensities;
-
-        // Check if any of the values are Nan, if so, replace with the average of lidar readings
-        // for (size_t i=0; i < scan_msg.ranges.size(); i++) {
-        //   if (std::isnan(scan_msg.ranges[i])) {
-        //     scan_msg.ranges[i] = (scan_msg.range_min + scan_msg.range_max) / 2.0;
-        //   }
-        // }
-
-        // // Check if intensitiesare Nan, if it is, replace with 0 (bad reflection/dark material)
-        // for (size_t i=0; i < scan_msg.intensities.size(); i++) {
-        //   if (std::isnan(scan_msg.intensities[i])) {
-        //     scan_msg.intensities[i] = 0.0;
-        //   }
-        // }
 
         // Adjust the angle_increment parameter
         // scan_msg.angle_increment = scan_msg.angle_increment * step; // Attempt #1
